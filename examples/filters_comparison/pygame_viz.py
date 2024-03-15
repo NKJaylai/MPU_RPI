@@ -7,7 +7,7 @@ import zmq
 import numpy as np
 import json
 
-host = '192.168.0.103'
+host = '10.2.171.72'
 port = 8358
 url = 'tcp://'+host+':'+str(port)
 context = zmq.Context()
@@ -97,7 +97,7 @@ def main():
                 quit()
 
         packet = socket.recv_json(0)
-        kal = packet['madgwick']
+        kal = packet['madgwick'].replace('nan', '0')
         vals = np.array(json.loads(kal))
 
         glRotatef(vals[0] - curr_roll, 1, 0, 0)
@@ -113,7 +113,7 @@ def main():
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         Cube()
         pygame.display.flip()
-        # pygame.time.wait(10)
+        #pygame.time.wait(10)
 
 
 main()
