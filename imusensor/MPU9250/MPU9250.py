@@ -166,7 +166,7 @@ class MPU9250:
 			self.__writeRegister(self.cfg.GyroConfig, self.cfg[gyroRange])
 			self.GyroRange = gyroRange
 		except:
-			print ("{0} is not a proper value for gyroscope range".format(gyroscope))
+			print ("{0} is not a proper value for gyroscope range".format(gyroRange))
 			return -1
 		gyroVal = float(gyroRange.split('t')[1].split('D')[0])
 		self.GyroScale = self.cfg.Degree2Radian*(gyroVal/32767.5)
