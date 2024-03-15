@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 15 12:25:02 2024
-
-@author: dlaijy
-"""
-
 import smbus		#import SMBus module of I2C
 from time import sleep  #import sleep
 import math
 
-#some MPU6050 Registers and their Address
+#Address
 Register_A     = 0x00           #Address of Configuration register A
 Register_B     = 0x01           #Address of configuration register B
 Register_mode  = 0x02           #Address of mode register
@@ -17,7 +10,7 @@ Register_mode  = 0x02           #Address of mode register
 X_axis_H    = 0x03              #Address of X-axis MSB data register
 Z_axis_H    = 0x05              #Address of Z-axis MSB data register
 Y_axis_H    = 0x07              #Address of Y-axis MSB data register
-declination = -0.00669          #define declination angle of location where measurement going to be done
+declination = -0.157          #define declination angle of location where measurement going to be done
 pi          = 3.14159265359     #define pi value
 
 
@@ -26,10 +19,10 @@ def Magnetometer_Init():
         bus.write_byte_data(Device_Address, Register_A, 0x70)
 
         #Write to Configuration Register B for gain
-        bus.write_byte_data(Device_Address, Register_B, 0xa0)
+        bus.write_byte_data(Device_Address, Register_B, 0xA0)
 
         #Write to mode Register for selecting mode
-        bus.write_byte_data(Device_Address, Register_mode, 0)
+        bus.write_byte_data(Device_Address, Register_mode, 0x00)
 	
 	
 
@@ -49,7 +42,7 @@ def read_raw_data(addr):
 
 
 bus = smbus.SMBus(1) 	# or bus = smbus.SMBus(0) for older version boards
-Device_Address = 0x1e   # HMC5883L magnetometer device address
+Device_Address = 0x1E   # HMC5883L magnetometer device address
 
 Magnetometer_Init()     # initialize HMC5883L magnetometer 
 
@@ -76,5 +69,5 @@ while True:
         #convert into angle
         heading_angle = int(heading * 180/pi)
 
-        print ("Heading Angle = %d°" %heading_angle)
+        print("Magnetic field in X: %.2f uT, Y: %.2f uT, Z: %.2f uT, Heading: %.2f°" % (x, y, z, heading_angle))
         sleep(1)
