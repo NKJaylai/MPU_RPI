@@ -148,7 +148,7 @@ class QMC5883L(object):
 
     def get_magnet(self):
         """Return the horizontal magnetic sensor vector with (x, y) calibration applied."""
-        [x, y, z] = self.get_bearing()
+        [x, y, z] = self.get_magnet_raw()
         if x is None or y is None or z is None:
             [x1, y1, z1] = [x, y, z]
         else:
@@ -225,8 +225,9 @@ class QMC5883L(object):
                            fset=set_calibration,
                            doc=u'Transformation matrix to adjust (x, y) magnetic vector.')
 
-sensor = QMC5883L()
-while True:
-    m = sensor.get_magnet()
-    print(m)
-    time.sleep(1)
+if __name__ == "__main__":
+    sensor = QMC5883L()
+    while True:
+        m = sensor.get_magnet()
+        print(m)
+        time.sleep(1)

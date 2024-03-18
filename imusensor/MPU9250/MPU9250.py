@@ -7,6 +7,7 @@ import json
 import smbus
 
 from imusensor.MPU9250 import config
+from Angle import QMC5883L
 
 class MPU9250:
 	"""
@@ -31,6 +32,7 @@ class MPU9250:
 		self.Mags = np.array([1.0, 1.0, 1.0])
 		self.GyroBias = np.array([0.0, 0.0, 0.0])
 		self.Magtransform = None
+		self.MagSensor = QMC5883L()
 
 	def begin(self):
 		"""
@@ -223,13 +225,14 @@ class MPU9250:
 		"""
 
 		data = self.__readRegisters(self.cfg.AccelOut, 21)
-
+		magvals = self.MagSensor.getmagnet_raw()
+        
 		data = np.array(data[:-1]).astype(np.int16)
 		magData = data[14:]
 		highbits = data[::2]<<8
 		vals = highbits + data[1::2]
-		magHighbits = magData[1::2]<<8
-		magvals = magHighbits + magData[::2]
+		#magHighbits = magData[1::2]<<8
+		#magvals = magHighbits + magData[::2]
 
 		self.AccelVals = (np.squeeze(self.cfg.transformationMatrix.dot((vals[np.newaxis,:3].T)))*self.AccelScale - self.AccelBias)*self.Accels
 		self.GyroVals = np.squeeze(self.cfg.transformationMatrix.dot((vals[np.newaxis,4:7].T)))*self.GyroScale - self.GyroBias
