@@ -16,7 +16,7 @@ imu.begin()
 # imu.caliberateMag()
 # print ("Mag calib successful")
 # or load your calibration file
-# imu.loadCalibDataFromFile("/home/pi/calib_real_bolder.json")
+# imu.loadCalibDataFromFile("/home/pi/MPU_RPI/calib_real4.json")
 
 sensorfusion = kalman.Kalman()
 

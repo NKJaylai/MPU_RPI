@@ -12,7 +12,7 @@ imu.begin()
 # imu.caliberateGyro()
 # imu.caliberateAccelerometer()
 # or load your own caliberation file
-#imu.loadCalibDataFromFile("/home/pi/calib_real_bolder.json")
+#imu.loadCalibDataFromFile("/home/pi/MPU_RPI/calib_real4.json")
 
 while True:
 	imu.readSensor()
