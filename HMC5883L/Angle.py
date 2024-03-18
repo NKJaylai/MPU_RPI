@@ -56,13 +56,13 @@ class QMC5883L(object):
                  i2c_bus=DFLT_BUS,
                  address=DFLT_ADDRESS,
                  output_data_rate=ODR_10HZ,
-                 output_range=RNG_2G,
+                 output_range=RNG_8G,
                  oversampling_rate=OSR_512):
 
         self.address = address
         self.bus = smbus.SMBus(i2c_bus)
         self.output_range = output_range
-        self._declination = 0.0
+        self._declination = 0.18333
         self._calibration = [[1.0, 0.0, 0.0],
                              [0.0, 1.0, 0.0],
                              [0.0, 0.0, 1.0]]
@@ -148,19 +148,20 @@ class QMC5883L(object):
 
     def get_magnet(self):
         """Return the horizontal magnetic sensor vector with (x, y) calibration applied."""
-        [x, y, z] = self.get_magnet_raw()
-        if x is None or y is None:
-            [x1, y1] = [x, y]
+        [x, y, z] = self.get_bearing()
+        if x is None or y is None or z is None:
+            [x1, y1, z1] = [x, y, z]
         else:
             c = self._calibration
-            x1 = x * c[0][0] + y * c[0][1] + c[0][2]
-            y1 = x * c[1][0] + y * c[1][1] + c[1][2]
-        return [x1, y1]
+            x1 = x * c[0][0] + y * c[0][1] + z * c[0][2]
+            y1 = x * c[1][0] + y * c[1][1] + z * c[1][2]
+            z1 = x * c[2][0] + y * c[2][1] + z * c[2][2]
+        return [x1, y1, z1]
 
     def get_bearing_raw(self):
         """Horizontal bearing (in degrees) from magnetic value X and Y."""
         [x, y, z] = self.get_magnet_raw()
-        if x is None or y is None:
+        if x is None or y is None or z is None:
             return None
         else:
             b = math.degrees(math.atan2(y, x))
@@ -170,7 +171,7 @@ class QMC5883L(object):
 
     def get_bearing(self):
         """Horizontal bearing, adjusted by calibration and declination."""
-        [x, y] = self.get_magnet()
+        [x, y, z] = self.get_magnet()
         if x is None or y is None:
             return None
         else:
@@ -223,3 +224,9 @@ class QMC5883L(object):
     calibration = property(fget=get_calibration,
                            fset=set_calibration,
                            doc=u'Transformation matrix to adjust (x, y) magnetic vector.')
+
+sensor = QMC5883L()
+while True:
+    m = sensor.get_magnet()
+    print(m)
+    time.sleep(1)
