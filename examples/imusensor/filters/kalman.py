@@ -23,14 +23,14 @@ class Kalman:
 		self.rollCovariance = np.zeros((2,2)) # updates
 		self.rollError = 0.001
 		self.rollDriftError = 0.003
-		self.rollMeasurementError = 0.03
+		self.rollMeasurementError = 0.08
 
 		self.currentPitchState = np.vstack((0.0, 0.0)) # updates
 		self.pitch = 0 # updates
 		self.pitchCovariance = np.zeros((2,2)) # updates
 		self.pitchError= 0.001
 		self.pitchDriftError = 0.003
-		self.pitchMeasurementError = 0.03
+		self.pitchMeasurementError = 0.4
 
 		self.currentYawState = np.vstack((0.0, 0.0)) # updates
 		self.yaw = 0 # updates
@@ -78,19 +78,13 @@ class Kalman:
 		reset, gy = self.__restrictRollAndPitch(measuredRoll, measuredPitch, gy)
 		# reset = 0
 		if not reset:
-			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																measuredRoll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, measuredRoll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	measuredPitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, measuredPitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt) 
 
-		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, \
-															measuredYaw, self.yawCovariance, \
-															self.yawError, self.yawDriftError, \
+		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, measuredYaw, self.yawCovariance, self.yawError, self.yawDriftError, \
 															self.yawMeasurementError, gz, dt)
 
 	def __restrictRollAndPitch(self, measuredRoll, measuredPitch, gy):
@@ -134,14 +128,10 @@ class Kalman:
 		reset, gy = self.__restrictRollAndPitch(measuredRoll, measuredPitch, gy)
 
 		if not reset:
-			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																measuredRoll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, measuredRoll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	measuredPitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, measuredPitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt)
 
 	def updateRollPitchYaw(self, roll, pitch, yaw, gx, gy, gz, dt):
@@ -173,9 +163,7 @@ class Kalman:
 
 		self.updateRollPitch(roll, pitch, gx, gy, dt)
 
-		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, \
-															yaw, self.yawCovariance, \
-															self.yawError, self.yawDriftError, \
+		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, yaw, self.yawCovariance, self.yawError, self.yawDriftError, \
 															self.yawMeasurementError, gz, dt)
 
 	def updateRollPitch(self, roll, pitch, gx, gy, dt):
@@ -201,14 +189,10 @@ class Kalman:
 
 		"""
 
-		self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																roll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+		self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, roll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	pitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, pitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt)
 
 	def computeRollAndPitch(self, ax, ay, az):

@@ -7,7 +7,7 @@ import json
 import smbus
 
 from imusensor.MPU9250 import config
-from Angle import QMC5883L
+from HMC5883L import QMC5883L
 
 class MPU9250:
 	"""
@@ -54,7 +54,7 @@ class MPU9250:
 		self.__writeRegister(self.cfg.PowerManagement1, self.cfg.ClockPLL)
 
 		name = self.__whoAmI()
-		if not (name[0] == 113 or name[0] == 115 ):
+		if not (name[0] == 113 or name[0] == 115 or name[0] == 112):
 			print ("The name is wrong {0}".format(name))
 		self.__writeRegister(self.cfg.PowerManagement2, self.cfg.SensorEnable)
 
@@ -62,7 +62,7 @@ class MPU9250:
 
 		self.setGyroRange("GyroRangeSelect2000DPS")
 
-		self.setLowPassFilterFrequency("AccelLowPassFilter184")
+		self.setLowPassFilterFrequency("AccelLowPassFilter5")
 
 		self.__writeRegister(self.cfg.SMPDivider, 0x00)
 		self.CurrentSRD = 0x00
@@ -72,24 +72,22 @@ class MPU9250:
 		self.__writeRegister(self.cfg.I2CMasterControl, self.cfg.I2CMasterClock)
 
 		magName = self.__whoAmIAK8963() # mag name seems to be different
-		if magName[0] != 72:
-			print ("The mag name is different and it is {0}".format(magName))
 
-		self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963FuseROM)
-		time.sleep(0.1)
-		self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963ContinuosMeasurment2)
-		time.sleep(0.1)
+		#self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963FuseROM)
+		#time.sleep(0.1)
+		#self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963ContinuosMeasurment2)
+		#time.sleep(0.1)
 		self.MagScale = self.__readAK8963Registers(self.cfg.Ak8963ASA, 3)
 		self.MagScale = np.array(self.MagScale)
 		self.MagScale = ((self.MagScale - 128.0)/256.0 + 1.0)*(4912.0/32760.0)
 
-		self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963PowerDown)
-		time.sleep(0.1)
-		self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963ContinuosMeasurment2)
-		time.sleep(0.1)
+		#self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963PowerDown)
+		#time.sleep(0.1)
+		#self.__writeAK8963Register(self.cfg.Ak8963CNTL1, self.cfg.Ak8963ContinuosMeasurment2)
+		#time.sleep(0.1)
 
 		self.__writeRegister(self.cfg.PowerManagement1, self.cfg.ClockPLL)
-		self.__readAK8963Registers(self.cfg.Ak8963HXL, 7)
+		#self.__readAK8963Registers(self.cfg.Ak8963HXL, 7)
 
 		# Caliberating Gyro 
 		self.caliberateGyro()

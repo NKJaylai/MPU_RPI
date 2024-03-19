@@ -78,19 +78,13 @@ class Kalman:
 		reset, gy = self.__restrictRollAndPitch(measuredRoll, measuredPitch, gy)
 		# reset = 0
 		if not reset:
-			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																measuredRoll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState,measuredRoll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	measuredPitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, measuredPitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt) 
 
-		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, \
-															measuredYaw, self.yawCovariance, \
-															self.yawError, self.yawDriftError, \
+		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, measuredYaw, self.yawCovariance, self.yawError, self.yawDriftError, \
 															self.yawMeasurementError, gz, dt)
 
 	def __restrictRollAndPitch(self, measuredRoll, measuredPitch, gy):
@@ -134,14 +128,10 @@ class Kalman:
 		reset, gy = self.__restrictRollAndPitch(measuredRoll, measuredPitch, gy)
 
 		if not reset:
-			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																measuredRoll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+			self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, measuredRoll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	measuredPitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, measuredPitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt)
 
 	def updateRollPitchYaw(self, roll, pitch, yaw, gx, gy, gz, dt):
@@ -172,10 +162,7 @@ class Kalman:
 		"""
 
 		self.updateRollPitch(roll, pitch, gx, gy, dt)
-
-		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, \
-															yaw, self.yawCovariance, \
-															self.yawError, self.yawDriftError, \
+		self.yaw, self.currentYawState, self.yawCovariance = self.update(self.currentYawState, yaw, self.yawCovariance, self.yawError, self.yawDriftError, \
 															self.yawMeasurementError, gz, dt)
 
 	def updateRollPitch(self, roll, pitch, gx, gy, dt):
@@ -201,14 +188,10 @@ class Kalman:
 
 		"""
 
-		self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, \
-																roll, self.rollCovariance, \
-																self.rollError, self.rollDriftError, \
+		self.roll, self.currentRollState, self.rollCovariance = self.update(self.currentRollState, roll, self.rollCovariance, self.rollError, self.rollDriftError, \
 																self.rollMeasurementError, gx, dt) 
 
-		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, \
-																	pitch, self.pitchCovariance, \
-																	self.pitchError, self.pitchDriftError, \
+		self.pitch, self.currentPitchState, self.pitchCovariance = self.update(self.currentPitchState, pitch, self.pitchCovariance, self.pitchError, self.pitchDriftError, \
 																	self.pitchMeasurementError, gy, dt)
 
 	def computeRollAndPitch(self, ax, ay, az):
@@ -258,7 +241,7 @@ class Kalman:
 		Returns
 		-------
 		measuresYaw: float
-					It is estimated yaw from sensor values
+		It is estimated yaw from sensor values
 
 		"""
 
@@ -269,10 +252,7 @@ class Kalman:
 		my = my/magLength
 		mz = mz/magLength
 
-		measuredYaw = np.degrees(np.arctan2(np.sin(roll)*mz - np.cos(roll)*my,\
-					np.cos(pitch)*mx + np.sin(roll)*np.sin(pitch)*my \
-					+ np.cos(roll)*np.sin(pitch)*mz) )
-
+		measuredYaw = np.degrees(np.arctan2(np.sin(roll)*mz - np.cos(roll)*my, np.cos(pitch)*mx + np.sin(roll)*np.sin(pitch)*my + np.cos(roll)*np.sin(pitch)*mz) )
 		return measuredYaw
 
 	def update(self, currentState, measurement, currentCovariance, error, driftError, measurementError, angularVelocity ,dt):
@@ -282,25 +262,30 @@ class Kalman:
 		Parameters
 		----------
 		currentState: float array 
-					It is current state of the sensor which implies current 
-					orientation in a specific axis and its corresponding 
-					bias. ex - [roll, roll_bias]
+		It is current state of the sensor which implies current orientation in a specific axis and its corresponding bias. ex - [roll, roll_bias]
+		
 		measurement: float 
-			estimate of the orinetation by the sensor. ex - measuredRoll
+		Estimate of the orinetation by the sensor. ex - measuredRoll
+		
 		currentCovariance: 2*2 array 
-						This represents matrix relating orientation and bias
-						ex - rollCovariance
+		This represents matrix relating orientation and bias
+		ex - rollCovariance
+		
 		error: float
-			This represents error in estimating the orientation
+		This represents error in estimating the orientation
+		
 		driftError: float
-				This represents error in estimating the  bias in orientation
+		This represents error in estimating the  bias in orientation
+		
 		measurementError: float
-						This represents error in sensor values
+		This represents error in sensor values
+		
 		angularVelocity: float
-						The angular velocity about the direction
-						of orientation
+		The angular velocity about the direction
+		of orientation
+		
 		dt: float
-			time interval for kalman filter to be applied
+		time interval for kalman filter to be applied
 
 		Returns
 		-------
